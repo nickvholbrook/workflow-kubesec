@@ -1,0 +1,31 @@
+name: Kubesec
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    name: Kubesec
+    runs-on: ubuntu-20.04
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run kubesec scanner
+        uses: controlplaneio/kubesec-action@master
+        with:
+          input: calico.yaml # specify configuration file to scan here
+          format: json
+          output: kubesec-report.json
+      
+      - name: display file content
+        run: |
+          cat kubesec-report.json
